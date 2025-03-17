@@ -65,6 +65,13 @@ if (class_exists($controllerName)) {
                 $controller->index();
             }
             break;
+        case 'save':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $controller->save();
+            } else {
+                $controller->index();
+            }
+            break;
         default:
             $controller->index();
             break;
