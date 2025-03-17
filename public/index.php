@@ -1,8 +1,10 @@
 <?php
 session_start();
+
 require_once __DIR__ . '/../app/controllers/SinhVienController.php';
 require_once __DIR__ . '/../app/controllers/HocPhanController.php';
 require_once __DIR__ . '/../app/controllers/AuthController.php';
+require_once __DIR__ . '/../app/controllers/DangKyController.php';
 
 $url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : 'sinhvien';
 $urlParts = explode('/', $url);
@@ -32,8 +34,10 @@ if (class_exists($controllerName)) {
             }
             break;
         case 'delete':
-            if ($param) {
+            if ($param && $_SERVER['REQUEST_METHOD'] === 'POST') { 
                 $controller->delete($param);
+            } else {
+                $controller->index();
             }
             break;
         case 'detail':
@@ -46,6 +50,20 @@ if (class_exists($controllerName)) {
             break;
         case 'logout':
             $controller->logout();
+            break;
+        case 'add':
+            if ($param && $_SERVER['REQUEST_METHOD'] === 'POST') { 
+                $controller->add($param);
+            } else {
+                $controller->index();
+            }
+            break;
+        case 'deleteAll':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
+                $controller->deleteAll();
+            } else {
+                $controller->index();
+            }
             break;
         default:
             $controller->index();

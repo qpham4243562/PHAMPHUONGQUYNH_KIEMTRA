@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<?php require_once __DIR__ . '/../header.php'; ?>
+    <?php require_once __DIR__ . '/../header.php'; ?>
     <meta charset="UTF-8">
     <title>Danh sách Học phần</title>
 </head>
@@ -12,12 +12,18 @@
             <th>Mã HP</th>
             <th>Tên HP</th>
             <th>Số Tín Chỉ</th>
+            <th>Hành động</th>
         </tr>
         <?php foreach ($hocPhanList as $hocPhan): ?>
             <tr>
                 <td><?php echo htmlspecialchars($hocPhan['MaHP']); ?></td>
                 <td><?php echo htmlspecialchars($hocPhan['TenHP']); ?></td>
                 <td><?php echo htmlspecialchars($hocPhan['SoTinChi']); ?></td>
+                <td>
+                    <form method="POST" action="/PHAMPHUONGQUYNH_KIEMTRA/public/dangky/add/<?php echo htmlspecialchars($hocPhan['MaHP']); ?>" style="display:inline;">
+                        <button type="submit">Đăng ký</button>
+                    </form>
+                </td>
             </tr>
         <?php endforeach; ?>
     </table>
