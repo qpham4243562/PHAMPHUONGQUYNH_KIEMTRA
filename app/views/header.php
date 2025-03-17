@@ -25,7 +25,6 @@
             <a href="/PHAMPHUONGQUYNH_KIEMTRA/public/hocphan">Học phần</a>
             <a href="/PHAMPHUONGQUYNH_KIEMTRA/public/dangky">Đăng ký</a>
             <?php
-            session_start();
             if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 echo "<a href='/PHAMPHUONGQUYNH_KIEMTRA/public/auth/logout'>Đăng xuất</a>";
             } else {
