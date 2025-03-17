@@ -79,6 +79,7 @@
                 <th>Mã HP</th>
                 <th>Tên HP</th>
                 <th>Số Tín Chỉ</th>
+                <th>Số lượng dự kiến</th>
                 <th>Hành động</th>
             </tr>
             <?php foreach ($dangKyList as $dangKy): ?>
@@ -86,6 +87,7 @@
                     <td><?php echo htmlspecialchars($dangKy['MaHP']); ?></td>
                     <td><?php echo htmlspecialchars($dangKy['TenHP']); ?></td>
                     <td><?php echo htmlspecialchars($dangKy['SoTinChi']); ?></td>
+                    <td><?php echo htmlspecialchars($dangKy['SoLuongDuKien']); ?></td>
                     <td>
                         <form method="POST" action="/PHAMPHUONGQUYNH_KIEMTRA/public/dangky/delete/<?php echo htmlspecialchars($dangKy['MaHP']); ?>" style="display:inline;">
                             <button type="submit" class="action-btn <?php echo $trangThai === 'DaLuu' ? 'disabled' : ''; ?>" <?php echo $trangThai === 'DaLuu' ? 'disabled' : ''; ?>>Xóa</button>

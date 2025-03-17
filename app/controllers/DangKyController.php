@@ -15,9 +15,7 @@ class DangKyController {
             header("Location: /PHAMPHUONGQUYNH_KIEMTRA/public/auth/login");
             exit();
         }
-
-
-        $query = "SELECT hp.MaHP, hp.TenHP, hp.SoTinChi
+        $query = "SELECT hp.MaHP, hp.TenHP, hp.SoTinChi, hp.SoLuongDuKien
                   FROM ChiTietDangKy ctdk
                   JOIN DangKy dk ON ctdk.MaDK = dk.MaDK
                   JOIN HocPhan hp ON ctdk.MaHP = hp.MaHP
@@ -27,12 +25,12 @@ class DangKyController {
         $stmt->execute();
         $dangKyList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
         $statusQuery = "SELECT TrangThai FROM DangKy WHERE MaSV = :maSV ORDER BY MaDK DESC LIMIT 1";
         $stmt = $this->conn->prepare($statusQuery);
         $stmt->bindParam(':maSV', $maSV);
         $stmt->execute();
         $trangThai = $stmt->fetchColumn() ?? 'ChuaLuu';
-
 
         require_once __DIR__ . '/../views/dangky/index.php';
     }
@@ -57,6 +55,18 @@ class DangKyController {
             exit();
         }
 
+        $checkSoLuongQuery = "SELECT SoLuongDuKien FROM HocPhan WHERE MaHP = :maHP";
+        $stmt = $this->conn->prepare($checkSoLuongQuery);
+        $stmt->bindParam(':maHP', $maHP);
+        $stmt->execute();
+        $soLuongDuKien = $stmt->fetchColumn();
+
+        if ($soLuongDuKien <= 0) {
+            header("Location: /PHAMPHUONGQUYNH_KIEMTRA/public/hocphan?message=no_slots");
+            exit();
+        }
+
+
         $checkQuery = "SELECT COUNT(*) FROM ChiTietDangKy ctdk
                        JOIN DangKy dk ON ctdk.MaDK = dk.MaDK
                        WHERE dk.MaSV = :maSV AND ctdk.MaHP = :maHP";
@@ -73,6 +83,7 @@ class DangKyController {
             $stmt->bindParam(':maSV', $maSV);
             $stmt->execute();
             $maDK = $this->conn->lastInsertId();
+
 
             $ctdkQuery = "INSERT INTO ChiTietDangKy (MaDK, MaHP) VALUES (:maDK, :maHP)";
             $stmt = $this->conn->prepare($ctdkQuery);
@@ -135,6 +146,7 @@ class DangKyController {
             exit();
         }
 
+
         $statusQuery = "SELECT TrangThai FROM DangKy WHERE MaSV = :maSV ORDER BY MaDK DESC LIMIT 1";
         $stmt = $this->conn->prepare($statusQuery);
         $stmt->bindParam(':maSV', $maSV);
@@ -172,19 +184,26 @@ class DangKyController {
             exit();
         }
 
-    
-        $query = "SELECT COUNT(*) 
+
+        $query = "SELECT ctdk.MaHP 
                   FROM ChiTietDangKy ctdk
                   JOIN DangKy dk ON ctdk.MaDK = dk.MaDK
                   WHERE dk.MaSV = :maSV";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':maSV', $maSV);
         $stmt->execute();
-        $count = $stmt->fetchColumn();
+        $maHPs = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        if ($count == 0) {
+        if (empty($maHPs)) {
             header("Location: /PHAMPHUONGQUYNH_KIEMTRA/public/dangky?message=no_items");
             exit();
+        }
+
+        foreach ($maHPs as $maHP) {
+            $updateQuery = "UPDATE HocPhan SET SoLuongDuKien = SoLuongDuKien - 1 WHERE MaHP = :maHP AND SoLuongDuKien > 0";
+            $stmt = $this->conn->prepare($updateQuery);
+            $stmt->bindParam(':maHP', $maHP);
+            $stmt->execute();
         }
 
         $updateQuery = "UPDATE DangKy SET TrangThai = 'DaLuu' WHERE MaSV = :maSV";
